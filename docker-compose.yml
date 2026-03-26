@@ -1,0 +1,24 @@
+services:
+  postgres-db:
+    image: postgres:15-alpine
+    container_name: capital_coffee_product_db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: productorder_db
+      TZ: Asia/Ho_Chi_Minh
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - capital_coffee_network
+
+volumes:
+  postgres_data:
+
+
+networks:
+  capital_coffee_network:
+    driver: bridge

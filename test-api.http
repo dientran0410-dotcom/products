@@ -1,0 +1,42 @@
+### Biến môi trường (Sửa lại port của bạn tại đây)
+@host = http://localhost:8080
+
+### 1. Tạo Category cơ bản (Chỉ có tên)
+POST {{host}}/api/categories
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "Trà Sữa"
+}
+
+### 2. Tạo Category Topping
+POST {{host}}/api/categories
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "Trân Châu Đen",
+  "isTopping": true
+}
+
+### 3. Tạo Sub-Category (Có parentId)
+# Lưu ý: Thay "YOUR-PARENT-UUID-HERE" bằng UUID thực tế lấy từ response của request 1
+POST {{host}}/api/categories
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "Trà Sữa Truyền Thống",
+  "isTopping": false,
+  "parentId": "a0000000-0000-0000-0000-000000000001"
+}
+
+### 4. Test validation (Trùng tên category đã tồn tại)
+POST {{host}}/api/categories
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "Trà Sữa"
+}

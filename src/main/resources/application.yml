@@ -1,0 +1,121 @@
+server:
+  address: 0.0.0.0
+  port: ${PORT:8181}
+
+spring:
+  application:
+    name: product-service
+
+  config:
+    import: optional:file:.env[.properties]
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+            issuer-uri: ${AUTH_SERVICE_URL:https://auth-service-wq2a.onrender.com}
+
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://dpg-d6oeah15pdvs73eha5rg-a.singapore-postgres.render.com:5432/productorder_db}
+    username: ${SPRING_DATASOURCE_USERNAME:productorder_db_user}
+    password: ${SPRING_DATASOURCE_PASSWORD:XO7JsM65kqdM9hTXfDVSylhqe67kmGWe}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
+      connection-timeout: 20000
+      idle-timeout: 300000
+      max-lifetime: 1200000
+
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update
+    
+    show-sql: true 
+    properties:
+      hibernate:
+        format_sql: true
+        globally_quoted_identifiers: true 
+    
+    open-in-view: false
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+
+  jackson:
+    default-property-inclusion: non_null
+    time-zone: Asia/Ho_Chi_Minh
+
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring.json.add.type.headers: false
+
+auth:
+  service:
+    url: ${AUTH_SERVICE_URL}
+
+rbp:
+  config: ${RBP_CONFIG:}
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_SERVER_URL:https://microservice-i7nc.onrender.com/eureka/}
+    fetch-registry: true
+    register-with-eureka: true
+    healthcheck:
+      enabled: true
+    instance-info-replication-interval-seconds: 30
+    registry-fetch-interval-seconds: 10
+
+  instance:
+    prefer-ip-address: false
+    hostname: ${RENDER_EXTERNAL_HOSTNAME:localhost}
+    secure-port: 443
+    secure-port-enabled: true
+    non-secure-port-enabled: false
+    status-page-url: https://${RENDER_EXTERNAL_HOSTNAME:localhost}/actuator/info
+    health-check-url: https://${RENDER_EXTERNAL_HOSTNAME:localhost}/actuator/health
+    home-page-url: https://${RENDER_EXTERNAL_HOSTNAME:localhost}/
+    lease-renewal-interval-in-seconds: 10
+    lease-expiration-duration-in-seconds: 30
+    instance-id: ${spring.application.name}:${RENDER_EXTERNAL_HOSTNAME:localhost}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
+  health:
+    livenessState:
+      enabled: true
+    readinessState:
+      enabled: true
+
+# ===============================
+# MOMO PAYMENT CONFIGURATION
+# ===============================
+momo:
+  end-point: ${MOMO_ENDPOINT:https://test-payment.momo.vn/v2/gateway/api/create}
+  partnerCode: ${MOMO_PARTNER_CODE:MOMO}
+  accessKey: ${MOMO_ACCESS_KEY:F8BBA842ECF85}
+  secretKey: ${MOMO_SECRET_KEY:K951B6PE1waDMi640xX08PD3vg6EkVlz}
+  redirectUrl: ${MOMO_REDIRECT_URL:http://localhost:5174/payment-success}
+  ipnUrl: ${MOMO_IPN_URL:https://localhost:8080/api/momo/ipn}
+
